@@ -18,9 +18,8 @@ module.exports = {
   // if none fit, the last one is used with the IGN shortened.
   // {ign}  {gs}  {cp} = 102,299  {cpk} = 102.3k
   formats: [
-    '{ign} | GS {gs} | CP {cp}',
-    '{ign} | GS {gs} | CP {cpk}',
-    '{ign} | {gs} | {cpk}',
+    
+    '{ign} | {gs} | {cpk}'
   ],
 
   exclude: [],            // usernames or user IDs to never rename, e.g. ['someuser', '123456789012345678']
