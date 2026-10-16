@@ -1,0 +1,40 @@
+name: Discord nicknames
+
+on:
+  schedule:
+    # Every 15 minutes, offset from the sheet sync so it picks up fresh numbers.
+    # Scheduled runs can start a few minutes late when GitHub is busy.
+    - cron: '7,22,37,52 * * * *'
+  workflow_dispatch:        # adds a "Run workflow" button on the Actions tab
+    inputs:
+      dry_run:
+        description: 'Dry run (show what would change, rename nobody)'
+        type: boolean
+        default: false
+
+concurrency:
+  group: discord-nicknames
+  cancel-in-progress: false
+
+jobs:
+  rename:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci --omit=dev
+
+      - name: Update nicknames
+        run: node src/index.js
+        env:
+          SHEET_ID: ${{ secrets.SHEET_ID }}
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
+          DRY_RUN: ${{ inputs.dry_run && '1' || '' }}
